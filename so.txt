@@ -1,1 +1,52 @@
-bokachoda
+git clone https://github.com/lolanv/ho.git
+/*
+create a function FillData to genrate an RXC dimension array of integers where R& C  reprsents row and column
+column count respectively (taken as a input value from user) Accept RXC  Input from the user and fill the array
+
+
+For e.g tHE input sequence
+                         2
+                         2
+                         10
+                         20
+                         30
+                         40
+
+Should create a matrix of values 
+                        
+                        10   |  20
+                        -----|-------
+                        30   |  40
+
+Create an Adaptor function that accepts following parameters
+  
+                   - A value R represents the count of rows in 2D array
+                   -A value C represnts the count of Columns in 2D array
+                   -A pointer to an array of integers (representing the values genrated in the FillData function)
+                   -A Function wrapper to any function matching the following Siganture
+                        -2 integers value (for R and C as described above ) along with the pointer to an  array 
+                        of integers 
+                        -Return type of the function should be void
+
+Invoke the adaptor function by passing the following function as parameters
+
+--A function that takes the above matrix as input and display the sum of values in each row
+  For eg-FOR The matrix above console should display
+                                             30
+                                             70
+
+--A function that display the highest value from the input matrix on the console
+   For eg-For the matrix above console should display 
+                                              40
+
+--A lambda function that display the square of the number at the last position of matrix
+   For eg-For the matrix above console should display 1600
+
+-- A lambda funciton that prints maximum number in  each column of the above matrix
+   For eg-fOR THe matrix aboveconsole should display 
+                                                30
+                                                40
+
+  Note- dont use vector or list use array 
+                     
+*/
