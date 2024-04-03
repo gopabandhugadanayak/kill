@@ -1,273 +1,301 @@
-EvCar.h
+Car.h
 
+#ifndef CAR_H
+#define CAR_H
 
-#ifndef EV_CAR_H
-#define EV_CAR_H
-
-#include <iostream>
 #include <string>
-#include "Platform.h"
+#include <functional>
+#include "Engine.h"
 
-class EvCar {
+class Car {
 private:
-    std::string m_car_id;
-    int m_battery_charging_time;
-    Platform m_platform;
-    float m_chassis_length;
-    int m_seat_count;
-    int m_top_speed;
+    std::string m_car_reg_number;
+    float m_price;
+    std::reference_wrapper<Engine> m_car_engine;
 
 public:
-    EvCar();
-    EvCar(const std::string& car_id, int battery_charging_time, Platform platform, float chassis_length, int seat_count, int top_speed);
+    Car(const std::string& car_reg_number, float price, Engine& car_engine);
 
-    // Getters
-    std::string getCarId() const;
-    int getBatteryChargingTime() const;
-    Platform getPlatform() const;
-    float getChassisLength() const;
-    int getSeatCount() const;
-    int getTopSpeed() const;
-
-    // Setters
-    void setCarId(const std::string& car_id);
-    void setBatteryChargingTime(int battery_charging_time);
-    void setPlatform(Platform platform);
-    void setChassisLength(float chassis_length);
-    void setSeatCount(int seat_count);
-    void setTopSpeed(int top_speed);
-
-    friend std::ostream& operator<<(std::ostream& os, const EvCar& car);
+    // Getter functions
+    std::string getCarRegNumber() const;
+    float getPrice() const;
+    Engine& getCarEngine() const;
 };
 
-#endif // EV_CAR_H
+#endif // CAR_H
 
 
+Car.cpp
 
-EvCar.cpp
+#include "Car.h"
+#include <stdexcept>
 
-#include "EvCar.h"
-
-// Constructor
-EvCar::EvCar() : m_battery_charging_time(0), m_platform(Platform::PURE_EV), m_chassis_length(0.0f), m_seat_count(0), m_top_speed(0) {}
-
-EvCar::EvCar(const std::string& car_id, int battery_charging_time, Platform platform, float chassis_length, int seat_count, int top_speed)
-    : m_car_id(car_id), m_battery_charging_time(battery_charging_time), m_platform(platform), m_chassis_length(chassis_length), m_seat_count(seat_count), m_top_speed(top_speed) {}
-
-// Getters
-std::string EvCar::getCarId() const {
-    return m_car_id;
-}
-
-int EvCar::getBatteryChargingTime() const {
-    return m_battery_charging_time;
-}
-
-Platform EvCar::getPlatform() const {
-    return m_platform;
-}
-
-float EvCar::getChassisLength() const {
-    return m_chassis_length;
-}
-
-int EvCar::getSeatCount() const {
-    return m_seat_count;
-}
-
-int EvCar::getTopSpeed() const {
-    return m_top_speed;
-}
-
-// Setters
-void EvCar::setCarId(const std::string& car_id) {
-    m_car_id = car_id;
-}
-
-void EvCar::setBatteryChargingTime(int battery_charging_time) {
-    if (battery_charging_time < 0 || battery_charging_time > 100) {
-        throw std::invalid_argument("Battery charging time must be between 0 and 100.");
+Car::Car(const std::string& car_reg_number, float price, Engine& car_engine)
+    : m_car_reg_number(car_reg_number), m_price(price), m_car_engine(car_engine) {
+    if (price < 0) {
+        throw std::invalid_argument("Price must be non-negative.");
     }
-    m_battery_charging_time = battery_charging_time;
 }
 
-void EvCar::setPlatform(Platform platform) {
-    m_platform = platform;
+std::string Car::getCarRegNumber() const {
+    return m_car_reg_number;
 }
 
-void EvCar::setChassisLength(float chassis_length) {
-    m_chassis_length = chassis_length;
+float Car::getPrice() const {
+    return m_price;
 }
 
-void EvCar::setSeatCount(int seat_count) {
-    m_seat_count = seat_count;
-}
-
-void EvCar::setTopSpeed(int top_speed) {
-    m_top_speed = top_speed;
-}
-
-// Overloaded << operator
-std::ostream& operator<<(std::ostream& os, const EvCar& car) {
-    os << "Car ID: " << car.m_car_id << "\n"
-       << "Battery Charging Time: " << car.m_battery_charging_time << "%\n"
-       << "Platform: " << (car.m_platform == Platform::PURE_EV ? "PURE_EV" : "IC_BASED") << "\n"
-       << "Chassis Length: " << car.m_chassis_length << " meters\n"
-       << "Seat Count: " << car.m_seat_count << "\n"
-       << "Top Speed: " << car.m_top_speed << " km/h";
-    return os;
+Engine& Car::getCarEngine() const {
+    return m_car_engine.get();
 }
 
 
-Platform.h
+Engine.h
 
+#ifndef ENGINE_H
+#define ENGINE_H
 
-#ifndef PLATFORM_H
-#define PLATFORM_H
+#include <string>
+#include "EngineType.h"
 
-enum class Platform {
-    PURE_EV,
-    IC_BASED
+class Engine {
+private:
+    std::string m_engine_number;
+    int m_engine_torque;
+    int m_horsepower;
+    EngineType m_engine_type;
+
+public:
+    Engine(const std::string& engine_number, int engine_torque, int horsepower, EngineType engine_type);
+
+    // Getter functions
+    std::string getEngineNumber() const;
+    int getEngineTorque() const;
+    int getHorsepower() const;
+    EngineType getEngineType() const;
 };
 
-#endif // PLATFORM_H
+#endif // ENGINE_H
 
 
+Engine.cpp
 
-Functionalities.h
+#include "Engine.h"
+#include <stdexcept>
+
+Engine::Engine(const std::string& engine_number, int engine_torque, int horsepower, EngineType engine_type)
+    : m_engine_number(engine_number), m_engine_torque(engine_torque), m_horsepower(horsepower), m_engine_type(engine_type) {
+    if (engine_torque < 0 || horsepower < 0) {
+        throw std::invalid_argument("Torque and horsepower must be non-negative.");
+    }
+}
+
+std::string Engine::getEngineNumber() const {
+    return m_engine_number;
+}
+
+int Engine::getEngineTorque() const {
+    return m_engine_torque;
+}
+
+int Engine::getHorsepower() const {
+    return m_horsepower;
+}
+
+EngineType Engine::getEngineType() const {
+    return m_engine_type;
+}
 
 
-#ifndef FUNCTIONALITIES_H
-#define FUNCTIONALITIES_H
+EngineType.h
 
-#include "EvCar.h"
+#ifndef ENGINETYPE_H
+#define ENGINETYPE_H
+
+enum class EngineType {
+    CRDI,
+    MPFI,
+    TURBOCHARGED
+};
+
+#endif // ENGINETYPE_H
+
+
+Operation.h
+
+
+#ifndef OPERATION_H
+#define OPERATION_H
+
 #include <vector>
-#include <list>
 #include <memory>
-#include <algorithm>
 #include <optional>
-#include <functional>
+#include "Car.h"
 
-std::vector<std::shared_ptr<EvCar>> createInstances();
+class Operation {
+private:
+    Operation() {}
+    static Operation* instance;
 
-int getTopSpeedById(const std::vector<std::shared_ptr<EvCar>>& cars, const std::string& car_id);
+public:
+    static Operation* getInstance();
 
-std::optional<std::list<std::shared_ptr<EvCar>>> getFirstNInstances(const std::vector<std::shared_ptr<EvCar>>& cars, int n);
+    std::vector<std::shared_ptr<Car>> createInstances(int numInstances);
+    std::vector<std::reference_wrapper<Engine>> getEngineReferences(const std::vector<std::shared_ptr<Car>>& cars);
+    bool allTorqueAboveThreshold(const std::vector<std::shared_ptr<Car>>& cars, int threshold);
+    std::optional<double> averageHorsepowerAbovePrice(const std::vector<std::shared_ptr<Car>>& cars, float threshold);
+    std::optional<EngineType> findEngineTypeByRegNumber(const std::vector<std::shared_ptr<Car>>& cars, const std::string& regNumber);
+    std::optional<std::reference_wrapper<Engine>> findHighestTorqueEngine(const std::vector<std::shared_ptr<Car>>& cars);
+};
 
-int countChassisLengthAbove(const std::vector<std::shared_ptr<EvCar>>& cars, float threshold);
-
-std::vector<std::shared_ptr<EvCar>> getInstancesSatisfyingPredicate(const std::vector<std::shared_ptr<EvCar>>& cars, std::function<bool(const std::shared_ptr<EvCar>&)> predicate);
-
-bool hasPureEV(const std::vector<std::shared_ptr<EvCar>>& cars);
-
-#endif // FUNCTIONALITIES_H
-
-
-Functionalities.cpp
+#endif // OPERATION_H
 
 
-#include "Functionalities.h"
+Operation.cpp
 
-std::vector<std::shared_ptr<EvCar>> createInstances() {
-    std::vector<std::shared_ptr<EvCar>> instances;
-    for (int i = 0; i < 5; ++i) {
-        instances.push_back(std::make_shared<EvCar>("Car" + std::to_string(i), 50, Platform::PURE_EV, 4.5f, 4, 200));
+
+#include "Operation.h"
+#include <algorithm>
+#include <numeric>
+#include <limits>
+
+Operation* Operation::instance = nullptr;
+
+Operation* Operation::getInstance() {
+    if (!instance) {
+        instance = new Operation();
+    }
+    return instance;
+}
+
+std::vector<std::shared_ptr<Car>> Operation::createInstances(int numInstances) {
+    std::vector<std::shared_ptr<Car>> instances;
+    for (int i = 0; i < numInstances; ++i) {
+        Engine engine("Engine_" + std::to_string(i), 150, 200, EngineType::CRDI); // Sample engine data
+        std::shared_ptr<Car> car = std::make_shared<Car>("Car_" + std::to_string(i), 50000, engine); // Sample car data
+        instances.push_back(car);
     }
     return instances;
 }
 
-int getTopSpeedById(const std::vector<std::shared_ptr<EvCar>>& cars, const std::string& car_id) {
-    auto it = std::find_if(cars.begin(), cars.end(), [&car_id](const std::shared_ptr<EvCar>& car) {
-        return car->getCarId() == car_id;
-    });
-    if (it != cars.end()) {
-        return (*it)->getTopSpeed();
+std::vector<std::reference_wrapper<Engine>> Operation::getEngineReferences(const std::vector<std::shared_ptr<Car>>& cars) {
+    std::vector<std::reference_wrapper<Engine>> engineRefs;
+    for (const auto& car : cars) {
+        engineRefs.push_back(std::ref(car->getCarEngine()));
     }
-    return -1; // Indicate failure
+    return engineRefs;
 }
 
-std::optional<std::list<std::shared_ptr<EvCar>>> getFirstNInstances(const std::vector<std::shared_ptr<EvCar>>& cars, int n) {
-    if (n <= 0 || n > cars.size()) {
-        return std::nullopt;
+bool Operation::allTorqueAboveThreshold(const std::vector<std::shared_ptr<Car>>& cars, int threshold) {
+    return std::all_of(cars.begin(), cars.end(), [threshold](const auto& car) {
+        return car->getCarEngine().getEngineTorque() > threshold;
+    });
+}
+
+std::optional<double> Operation::averageHorsepowerAbovePrice(const std::vector<std::shared_ptr<Car>>& cars, float threshold) {
+    auto aboveThreshold = std::find_if(cars.begin(), cars.end(), [threshold](const auto& car) {
+        return car->getPrice() > threshold;
+    });
+    if (aboveThreshold == cars.end()) {
+        return std::nullopt; // No car above threshold
     }
-    std::list<std::shared_ptr<EvCar>> result;
-    std::copy(cars.begin(), cars.begin() + n, std::back_inserter(result));
-    return result;
+
+    double sumHorsepower = 0;
+    int count = 0;
+    for (; aboveThreshold != cars.end(); ++aboveThreshold) {
+        sumHorsepower += (*aboveThreshold)->getCarEngine().getHorsepower();
+        ++count;
+    }
+    return sumHorsepower / count;
 }
 
-int countChassisLengthAbove(const std::vector<std::shared_ptr<EvCar>>& cars, float threshold) {
-    return std::count_if(cars.begin(), cars.end(), [threshold](const std::shared_ptr<EvCar>& car) {
-        return car->getChassisLength() > threshold;
+std::optional<EngineType> Operation::findEngineTypeByRegNumber(const std::vector<std::shared_ptr<Car>>& cars, const std::string& regNumber) {
+    auto car = std::find_if(cars.begin(), cars.end(), [regNumber](const auto& car) {
+        return car->getCarRegNumber() == regNumber;
     });
+    if (car != cars.end()) {
+        return car->get()->getCarEngine().getEngineType();
+    }
+    return std::nullopt;
 }
 
-std::vector<std::shared_ptr<EvCar>> getInstancesSatisfyingPredicate(const std::vector<std::shared_ptr<EvCar>>& cars, std::function<bool(const std::shared_ptr<EvCar>&)> predicate) {
-    std::vector<std::shared_ptr<EvCar>> result;
-    std::copy_if(cars.begin(), cars.end(), std::back_inserter(result), predicate);
-    return result;
-}
-
-bool hasPureEV(const std::vector<std::shared_ptr<EvCar>>& cars) {
-    return std::any_of(cars.begin(), cars.end(), [](const std::shared_ptr<EvCar>& car) {
-        return car->getPlatform() == Platform::PURE_EV;
+std::optional<std::reference_wrapper<Engine>> Operation::findHighestTorqueEngine(const std::vector<std::shared_ptr<Car>>& cars) {
+    auto maxTorqueCar = std::max_element(cars.begin(), cars.end(), [](const auto& car1, const auto& car2) {
+        return car1->getCarEngine().getEngineTorque() < car2->getCarEngine().getEngineTorque();
     });
+    if (maxTorqueCar != cars.end()) {
+        return std::ref((*maxTorqueCar)->getCarEngine());
+    }
+    return std::nullopt;
 }
 
 
 
 Main.cpp
 
-#include "EvCar.h"
-#include "Functionalities.h"
+
 #include <iostream>
+#include <vector>
+#include <future>
+#include "Operation.h"
 
 int main() {
     try {
-        // Creating instances
-        std::vector<std::shared_ptr<EvCar>> cars = createInstances();
+        Operation* operation = Operation::getInstance();
+        std::vector<std::shared_ptr<Car>> cars;
+        std::future<std::vector<std::shared_ptr<Car>>> future_createInstances = std::async(std::launch::async, &Operation::createInstances, operation, 5);
+        cars = future_createInstances.get();
 
-        // Get top speed by ID
-        std::cout << "Top Speed of Car with ID Car2: " << getTopSpeedById(cars, "Car2") << " km/h\n";
+        std::future<std::vector<std::reference_wrapper<Engine>>> future_getEngineReferences = std::async(std::launch::async, &Operation::getEngineReferences, operation, std::ref(cars));
+        std::vector<std::reference_wrapper<Engine>> engineRefs = future_getEngineReferences.get();
+        std::cout << "Number of engine references: " << engineRefs.size() << std::endl;
 
-        // Get first N instances
-        std::optional<std::list<std::shared_ptr<EvCar>>> firstNInstances = getFirstNInstances(cars, 3);
-        if (firstNInstances.has_value()) {
-            std::cout << "First 3 Instances:\n";
-            for (const auto& car : *firstNInstances) {
-                std::cout << *car << "\n\n";
-            }
+        std::future<bool> future_allTorqueAboveThreshold = std::async(std::launch::async, &Operation::allTorqueAboveThreshold, operation, std::ref(cars), 120);
+        bool allTorqueAbove = future_allTorqueAboveThreshold.get();
+        std::cout << "All torque above 120: " << std::boolalpha << allTorqueAbove << std::endl;
+
+        std::future<std::optional<double>> future_averageHorsepowerAbovePrice = std::async(std::launch::async, &Operation::averageHorsepowerAbovePrice, operation, std::ref(cars), 45000);
+        std::optional<double> avgHorsepowerAbovePrice = future_averageHorsepowerAbovePrice.get();
+        if (avgHorsepowerAbovePrice) {
+            std::cout << "Average horsepower for cars above $45,000: " << *avgHorsepowerAbovePrice << std::endl;
         } else {
-            std::cout << "Invalid N value for first N instances.\n";
+            std::cout << "No cars found above $45,000." << std::endl;
         }
 
-        // Count instances with chassis length above 2.7f
-        std::cout << "Count of Instances with Chassis Length above 2.7 meters: "
-                  << countChassisLengthAbove(cars, 2.7f) << "\n";
-
-        // Get instances satisfying predicate
-        std::cout << "Instances with Top Speed above 150 km/h:\n";
-        auto highSpeedCars = getInstancesSatisfyingPredicate(cars, [](const std::shared_ptr<EvCar>& car) {
-            return car->getTopSpeed() > 150;
-        });
-        for (const auto& car : highSpeedCars) {
-            std::cout << *car << "\n\n";
+        std::future<std::optional<EngineType>> future_findEngineTypeByRegNumber = std::async(std::launch::async, &Operation::findEngineTypeByRegNumber, operation, std::ref(cars), "Car_2");
+        std::optional<EngineType> engineTypeByRegNumber = future_findEngineTypeByRegNumber.get();
+        if (engineTypeByRegNumber) {
+            std::cout << "Engine type for car with registration number 'Car_2': ";
+            switch (*engineTypeByRegNumber) {
+                case EngineType::CRDI:
+                    std::cout << "CRDI";
+                    break;
+                case EngineType::MPFI:
+                    std::cout << "MPFI";
+                    break;
+                case EngineType::TURBOCHARGED:
+                    std::cout << "TURBOCHARGED";
+                    break;
+            }
+            std::cout << std::endl;
+        } else {
+            std::cout << "Car with registration number 'Car_2' not found." << std::endl;
         }
 
-        // Check if at least one car is PURE_EV
-        std::cout << "At least one car is PURE_EV: " << std::boolalpha << hasPureEV(cars) << "\n";
-
-    } catch (const std::exception& e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
+        std::future<std::optional<std::reference_wrapper<Engine>>> future_findHighestTorqueEngine = std::async(std::launch::async, &Operation::findHighestTorqueEngine, operation, std::ref(cars));
+        std::optional<std::reference_wrapper<Engine>> highestTorqueEngine = future_findHighestTorqueEngine.get();
+        if (highestTorqueEngine) {
+            std::cout << "Engine with highest torque: " << highestTorqueEngine->get().getEngineNumber() << std::endl;
+        } else {
+            std::cout << "No engines found." << std::endl;
+        }
+    } catch (const std::exception& ex) {
+        std::cerr << "Exception occurred: " << ex.what() << std::endl;
     }
 
     return 0;
 }
 
 
-Terminal command : g++ *.cpp -o app && ./app
-
-
-
-
-
+Terminal commnad : g++ *.cpp --std=c++17 -pthread -o app && ./app
 
