@@ -1,0 +1,273 @@
+EvCar.h
+
+
+#ifndef EV_CAR_H
+#define EV_CAR_H
+
+#include <iostream>
+#include <string>
+#include "Platform.h"
+
+class EvCar {
+private:
+    std::string m_car_id;
+    int m_battery_charging_time;
+    Platform m_platform;
+    float m_chassis_length;
+    int m_seat_count;
+    int m_top_speed;
+
+public:
+    EvCar();
+    EvCar(const std::string& car_id, int battery_charging_time, Platform platform, float chassis_length, int seat_count, int top_speed);
+
+    // Getters
+    std::string getCarId() const;
+    int getBatteryChargingTime() const;
+    Platform getPlatform() const;
+    float getChassisLength() const;
+    int getSeatCount() const;
+    int getTopSpeed() const;
+
+    // Setters
+    void setCarId(const std::string& car_id);
+    void setBatteryChargingTime(int battery_charging_time);
+    void setPlatform(Platform platform);
+    void setChassisLength(float chassis_length);
+    void setSeatCount(int seat_count);
+    void setTopSpeed(int top_speed);
+
+    friend std::ostream& operator<<(std::ostream& os, const EvCar& car);
+};
+
+#endif // EV_CAR_H
+
+
+
+EvCar.cpp
+
+#include "EvCar.h"
+
+// Constructor
+EvCar::EvCar() : m_battery_charging_time(0), m_platform(Platform::PURE_EV), m_chassis_length(0.0f), m_seat_count(0), m_top_speed(0) {}
+
+EvCar::EvCar(const std::string& car_id, int battery_charging_time, Platform platform, float chassis_length, int seat_count, int top_speed)
+    : m_car_id(car_id), m_battery_charging_time(battery_charging_time), m_platform(platform), m_chassis_length(chassis_length), m_seat_count(seat_count), m_top_speed(top_speed) {}
+
+// Getters
+std::string EvCar::getCarId() const {
+    return m_car_id;
+}
+
+int EvCar::getBatteryChargingTime() const {
+    return m_battery_charging_time;
+}
+
+Platform EvCar::getPlatform() const {
+    return m_platform;
+}
+
+float EvCar::getChassisLength() const {
+    return m_chassis_length;
+}
+
+int EvCar::getSeatCount() const {
+    return m_seat_count;
+}
+
+int EvCar::getTopSpeed() const {
+    return m_top_speed;
+}
+
+// Setters
+void EvCar::setCarId(const std::string& car_id) {
+    m_car_id = car_id;
+}
+
+void EvCar::setBatteryChargingTime(int battery_charging_time) {
+    if (battery_charging_time < 0 || battery_charging_time > 100) {
+        throw std::invalid_argument("Battery charging time must be between 0 and 100.");
+    }
+    m_battery_charging_time = battery_charging_time;
+}
+
+void EvCar::setPlatform(Platform platform) {
+    m_platform = platform;
+}
+
+void EvCar::setChassisLength(float chassis_length) {
+    m_chassis_length = chassis_length;
+}
+
+void EvCar::setSeatCount(int seat_count) {
+    m_seat_count = seat_count;
+}
+
+void EvCar::setTopSpeed(int top_speed) {
+    m_top_speed = top_speed;
+}
+
+// Overloaded << operator
+std::ostream& operator<<(std::ostream& os, const EvCar& car) {
+    os << "Car ID: " << car.m_car_id << "\n"
+       << "Battery Charging Time: " << car.m_battery_charging_time << "%\n"
+       << "Platform: " << (car.m_platform == Platform::PURE_EV ? "PURE_EV" : "IC_BASED") << "\n"
+       << "Chassis Length: " << car.m_chassis_length << " meters\n"
+       << "Seat Count: " << car.m_seat_count << "\n"
+       << "Top Speed: " << car.m_top_speed << " km/h";
+    return os;
+}
+
+
+Platform.h
+
+
+#ifndef PLATFORM_H
+#define PLATFORM_H
+
+enum class Platform {
+    PURE_EV,
+    IC_BASED
+};
+
+#endif // PLATFORM_H
+
+
+
+Functionalities.h
+
+
+#ifndef FUNCTIONALITIES_H
+#define FUNCTIONALITIES_H
+
+#include "EvCar.h"
+#include <vector>
+#include <list>
+#include <memory>
+#include <algorithm>
+#include <optional>
+#include <functional>
+
+std::vector<std::shared_ptr<EvCar>> createInstances();
+
+int getTopSpeedById(const std::vector<std::shared_ptr<EvCar>>& cars, const std::string& car_id);
+
+std::optional<std::list<std::shared_ptr<EvCar>>> getFirstNInstances(const std::vector<std::shared_ptr<EvCar>>& cars, int n);
+
+int countChassisLengthAbove(const std::vector<std::shared_ptr<EvCar>>& cars, float threshold);
+
+std::vector<std::shared_ptr<EvCar>> getInstancesSatisfyingPredicate(const std::vector<std::shared_ptr<EvCar>>& cars, std::function<bool(const std::shared_ptr<EvCar>&)> predicate);
+
+bool hasPureEV(const std::vector<std::shared_ptr<EvCar>>& cars);
+
+#endif // FUNCTIONALITIES_H
+
+
+Functionalities.cpp
+
+
+#include "Functionalities.h"
+
+std::vector<std::shared_ptr<EvCar>> createInstances() {
+    std::vector<std::shared_ptr<EvCar>> instances;
+    for (int i = 0; i < 5; ++i) {
+        instances.push_back(std::make_shared<EvCar>("Car" + std::to_string(i), 50, Platform::PURE_EV, 4.5f, 4, 200));
+    }
+    return instances;
+}
+
+int getTopSpeedById(const std::vector<std::shared_ptr<EvCar>>& cars, const std::string& car_id) {
+    auto it = std::find_if(cars.begin(), cars.end(), [&car_id](const std::shared_ptr<EvCar>& car) {
+        return car->getCarId() == car_id;
+    });
+    if (it != cars.end()) {
+        return (*it)->getTopSpeed();
+    }
+    return -1; // Indicate failure
+}
+
+std::optional<std::list<std::shared_ptr<EvCar>>> getFirstNInstances(const std::vector<std::shared_ptr<EvCar>>& cars, int n) {
+    if (n <= 0 || n > cars.size()) {
+        return std::nullopt;
+    }
+    std::list<std::shared_ptr<EvCar>> result;
+    std::copy(cars.begin(), cars.begin() + n, std::back_inserter(result));
+    return result;
+}
+
+int countChassisLengthAbove(const std::vector<std::shared_ptr<EvCar>>& cars, float threshold) {
+    return std::count_if(cars.begin(), cars.end(), [threshold](const std::shared_ptr<EvCar>& car) {
+        return car->getChassisLength() > threshold;
+    });
+}
+
+std::vector<std::shared_ptr<EvCar>> getInstancesSatisfyingPredicate(const std::vector<std::shared_ptr<EvCar>>& cars, std::function<bool(const std::shared_ptr<EvCar>&)> predicate) {
+    std::vector<std::shared_ptr<EvCar>> result;
+    std::copy_if(cars.begin(), cars.end(), std::back_inserter(result), predicate);
+    return result;
+}
+
+bool hasPureEV(const std::vector<std::shared_ptr<EvCar>>& cars) {
+    return std::any_of(cars.begin(), cars.end(), [](const std::shared_ptr<EvCar>& car) {
+        return car->getPlatform() == Platform::PURE_EV;
+    });
+}
+
+
+
+Main.cpp
+
+#include "EvCar.h"
+#include "Functionalities.h"
+#include <iostream>
+
+int main() {
+    try {
+        // Creating instances
+        std::vector<std::shared_ptr<EvCar>> cars = createInstances();
+
+        // Get top speed by ID
+        std::cout << "Top Speed of Car with ID Car2: " << getTopSpeedById(cars, "Car2") << " km/h\n";
+
+        // Get first N instances
+        std::optional<std::list<std::shared_ptr<EvCar>>> firstNInstances = getFirstNInstances(cars, 3);
+        if (firstNInstances.has_value()) {
+            std::cout << "First 3 Instances:\n";
+            for (const auto& car : *firstNInstances) {
+                std::cout << *car << "\n\n";
+            }
+        } else {
+            std::cout << "Invalid N value for first N instances.\n";
+        }
+
+        // Count instances with chassis length above 2.7f
+        std::cout << "Count of Instances with Chassis Length above 2.7 meters: "
+                  << countChassisLengthAbove(cars, 2.7f) << "\n";
+
+        // Get instances satisfying predicate
+        std::cout << "Instances with Top Speed above 150 km/h:\n";
+        auto highSpeedCars = getInstancesSatisfyingPredicate(cars, [](const std::shared_ptr<EvCar>& car) {
+            return car->getTopSpeed() > 150;
+        });
+        for (const auto& car : highSpeedCars) {
+            std::cout << *car << "\n\n";
+        }
+
+        // Check if at least one car is PURE_EV
+        std::cout << "At least one car is PURE_EV: " << std::boolalpha << hasPureEV(cars) << "\n";
+
+    } catch (const std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+
+    return 0;
+}
+
+
+Terminal command : g++ *.cpp -o app && ./app
+
+
+
+
+
+
