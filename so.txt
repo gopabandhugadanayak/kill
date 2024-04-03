@@ -1,52 +1,38 @@
-git clone https://github.com/lolanv/ho.git
 /*
-create a function FillData to genrate an RXC dimension array of integers where R& C  reprsents row and column
-column count respectively (taken as a input value from user) Accept RXC  Input from the user and fill the array
+Create a class EvCar of the following attributes 
+
+-- m_car_id which is a string type
+-- m_battery_charging_time which is a int value(indicating full  charging battery starts from 0% to 100%)
+-- m_platform which is either PURE_EV or IC_BASED
+-- m_chasis_length which is a float value
+-- M_seat_count which is a integer value
+-- m_top_speed which is a integer value
+
+Create a file functionalites.cpp and put the following functions
+
+-- A function which create 5 instances in a container that stores data contiguiously ,Instances must be
+   created at heap and should be managed by a smart pointer
+
+--// A function to  return m_top_speed of the EvCar instances from the input container whoose m_car_id is passed as parameter
+
+//a function to find and return std::list on first N instances from the input container where N is taken as a input parameter(consider invalid N value inputs appropiateley)
+
+    //a function to find and  return count of instance whoose m_chasis_length is above 2.7f 
+
+//A function to return a container of all instances from the input data which satisfy the predicate(passed as a function pointer or lambda)
+
+    //A function to find and return a boolean to indicate wheather at least one input data instance has m_platform value as PURE_EV
 
 
-For e.g tHE input sequence
-                         2
-                         2
-                         10
-                         20
-                         30
-                         40
+*/
 
-Should create a matrix of values 
-                        
-                        10   |  20
-                        -----|-------
-                        30   |  40
 
-Create an Adaptor function that accepts following parameters
-  
-                   - A value R represents the count of rows in 2D array
-                   -A value C represnts the count of Columns in 2D array
-                   -A pointer to an array of integers (representing the values genrated in the FillData function)
-                   -A Function wrapper to any function matching the following Siganture
-                        -2 integers value (for R and C as described above ) along with the pointer to an  array 
-                        of integers 
-                        -Return type of the function should be void
+/*
+Note;-
 
-Invoke the adaptor function by passing the following function as parameters
-
---A function that takes the above matrix as input and display the sum of values in each row
-  For eg-FOR The matrix above console should display
-                                             30
-                                             70
-
---A function that display the highest value from the input matrix on the console
-   For eg-For the matrix above console should display 
-                                              40
-
---A lambda function that display the square of the number at the last position of matrix
-   For eg-For the matrix above console should display 1600
-
--- A lambda funciton that prints maximum number in  each column of the above matrix
-   For eg-fOR THe matrix aboveconsole should display 
-                                                30
-                                                40
-
-  Note- dont use vector or list use array 
-                     
+1_create a special member function as per requirement
+2- create necessary parameeterzed constructor and getters and setters
+3- overload <<operator for the class
+4- handle all corner cases using std::nullopt and std::optional
+5-use  STL algo to perform all operations
 */
